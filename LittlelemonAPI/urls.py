@@ -10,9 +10,8 @@ urlpatterns = [
     
     path('category', views.CategoryView.as_view()),
     path('category/<int:id>', views.SingleCategoryView.as_view()),
-    path('category-detail/<int:pk>',views.category_detail, name='category-detail')
-
-
+    path('category-detail/<int:pk>',views.category_detail, name='category-detail'),
+    path('menu',views.menu),
     
 ]
 
