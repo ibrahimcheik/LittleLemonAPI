@@ -18,6 +18,10 @@ from django.core.paginator import Paginator, EmptyPage
 # Built in Pagination, filtering and sorting
 from rest_framework import viewsets
 
+#Authentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+
 
 
 class MenuItemsViewSet(viewsets.ModelViewSet):
@@ -97,6 +101,27 @@ def single_item(request, id):
     item = get_object_or_404(MenuItem, pk=id)
     serialized_item = MenuItemSerializer(item)
     return Response(serialized_item.data)
+
+
+#PERMISSIONS & AUTHAURIZATION
+
+@api_view()
+@permission_classes([IsAuthenticated])
+def secret(request):
+    return Response({"message": "Some secret here"})
+
+@api_view()
+@permission_classes([IsAuthenticated])
+def manager_view(request):
+    
+    if request.user.groups.filter(name='Manager').exists():
+        return Response({"message": "Only Manager should see this"})
+    else:
+        return Response({"message": "You are not authorizes"}, 403)
+
+
+
+
 
 @api_view()
 def category_detail(request, pk):
