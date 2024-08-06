@@ -17,3 +17,20 @@ class MenuItem(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=2)
     inventory = models.SmallIntegerField()
     category = models.ForeignKey(Category, on_delete=models.PROTECT, default=1)
+
+
+""" class MenuItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = MenuItem
+        fields = [
+            'id',
+            'title',
+            'price',
+            'inventory',
+        ]
+        extra_kwargs = { 
+            'price': {'min_value': 2},
+            'inventory': {'min_value': 0}
+         } """

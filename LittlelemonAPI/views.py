@@ -8,7 +8,9 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 
-from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.renderers import TemplateHTMLRenderer, StaticHTMLRenderer
+from rest_framework_csv.renderers import CSVRenderer
+from rest_framework_yaml.renderers import YAMLRenderer
 
 
 @api_view() 
@@ -18,14 +20,33 @@ def menu(request):
     serialized_item = MenuItemSerializer(items, many=True)
     return Response({'data':serialized_item.data}, template_name='menu-item.html')
 
+@api_view(['GET'])
+@renderer_classes([StaticHTMLRenderer])
+def welcome(request):
+    data = '<html><body><h1>Welcome To Little Lemon API Project</h1></body></html>'
+    return Response(data)
+
 
 # Create your views here.
 
 @api_view(['GET', 'POST'])
+#@renderer_classes([CSVRenderer])
+#@renderer_classes([YAMLRenderer])
+
 def menu_items(request):
     if request.method == 'GET':
         items = MenuItem.objects.select_related('category').all()
         #return Response(items.values())
+        
+        category_name = request.query_params.get('category')
+        to_price = request.query_params.get('price')
+        search = request.query_params('search')
+        if category_name:
+            items = items.filter(category__title=category_name)
+        if to_price:
+            items = items.filter(price=to_price) # lte = Less Then or Equal to given value
+        if search:
+            items = items.filter(title_startswith=search) #istartswith, contains, icontains
         serialized_items = MenuItemSerializer(items, many=True, context={'request': request})
         return Response(serialized_items.data)
     if request.method == 'POST':
