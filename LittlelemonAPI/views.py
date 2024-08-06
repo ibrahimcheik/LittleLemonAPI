@@ -35,18 +35,22 @@ def welcome(request):
 
 def menu_items(request):
     if request.method == 'GET':
-        items = MenuItem.objects.select_related('category').all()
-        #return Response(items.values())
-        
+        items = MenuItem.objects.select_related('category').all()        
         category_name = request.query_params.get('category')
         to_price = request.query_params.get('price')
-        search = request.query_params('search')
+        search = request.query_params.get('search')
+        ordering = request.query_params.get('ordering')
         if category_name:
             items = items.filter(category__title=category_name)
         if to_price:
             items = items.filter(price=to_price) # lte = Less Then or Equal to given value
         if search:
             items = items.filter(title_startswith=search) #istartswith, contains, icontains
+        if ordering:
+            #items = items.order_by(ordering)    
+            ordering_fields = ordering.split(",")
+            items = items.order_by(*ordering_fields)
+            
         serialized_items = MenuItemSerializer(items, many=True, context={'request': request})
         return Response(serialized_items.data)
     if request.method == 'POST':
@@ -55,6 +59,8 @@ def menu_items(request):
         serialized_items.save()
         return Response(serialized_items.data, status.HTTP_201_CREATED)
         
+        #return Response(items.values())
+
         
         
 @api_view(['GET','POST','PUT', 'PATCH'])
