@@ -5,6 +5,9 @@ from decimal import Decimal
 from rest_framework.validators import UniqueValidator
 from rest_framework.validators import UniqueTogetherValidator
 
+#Data Sanitization
+import bleach
+
 
 
 class CategorySerializers(serializers.ModelSerializer):
@@ -46,6 +49,7 @@ class MenuItemSerializer(serializers.HyperlinkedModelSerializer):
             
         #Method 4: Using the validate() method 
     def validate(self, attrs):
+        attrs['title'] = bleach.clean(attrs['title'])
         if(attrs['price']<500):
             raise serializers.ValidationError('Price should not be less than 500')
         if(attrs['inventory']<0):
@@ -53,6 +57,9 @@ class MenuItemSerializer(serializers.HyperlinkedModelSerializer):
         return super().validate(attrs)
 
     #title = serializers.CharField(max_length=255,validators=[UniqueValidator(queryset=MenuItem.objects.all())])
+    
+    """ def validate_title(self, value):
+        return bleach.clean(value) """
             
         
     class Meta:
