@@ -1,4 +1,6 @@
 from pathlib import Path
+from datetime import timedelta
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,6 +28,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser', # always after rest_framework app
+    
+    #JWT
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist' # migrate db before running
 
 ]
 
@@ -129,21 +135,28 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 2,
     'DEFAULT_AUTHENTICATION_CLASSES':(
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication', # for browsable api view !!!REMOVE before production
     ),
-    'DEFAULT_THROTTLE_RATES':{
+    """ 'DEFAULT_THROTTLE_RATES':{
         'anon': '2/minute', # second, day, minute
         'user': '10/minute',
         'ten': '10/minute',
-    },
+    }, """
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
     ],
 }
 
+#DJOSER
 DJOSER = {
     "USER_ID_FIELD": "username"
     #"LOGIN_FIELD": "email"
+}
+
+#JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
 }
