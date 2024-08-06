@@ -12,6 +12,9 @@ from rest_framework.renderers import TemplateHTMLRenderer, StaticHTMLRenderer
 from rest_framework_csv.renderers import CSVRenderer
 from rest_framework_yaml.renderers import YAMLRenderer
 
+#pagination
+from django.core.paginator import Paginator, EmptyPage
+
 
 @api_view() 
 @renderer_classes ([TemplateHTMLRenderer])
@@ -35,11 +38,15 @@ def welcome(request):
 
 def menu_items(request):
     if request.method == 'GET':
+        
         items = MenuItem.objects.select_related('category').all()        
         category_name = request.query_params.get('category')
         to_price = request.query_params.get('price')
         search = request.query_params.get('search')
         ordering = request.query_params.get('ordering')
+        perpage = request.query_params.get('perpage', default=2)
+        page = request.query_params.get('page', default=1)
+        
         if category_name:
             items = items.filter(category__title=category_name)
         if to_price:
@@ -51,8 +58,16 @@ def menu_items(request):
             ordering_fields = ordering.split(",")
             items = items.order_by(*ordering_fields)
             
+        paginator = Paginator(items, per_page=perpage)
+        try:
+            items = paginator.page(number=page)
+        except EmptyPage:
+            items = []
+            
         serialized_items = MenuItemSerializer(items, many=True, context={'request': request})
+        
         return Response(serialized_items.data)
+    
     if request.method == 'POST':
         serialized_items = MenuItemSerializer(data=request.data)
         serialized_items.is_valid(raise_exception=True)
