@@ -29,11 +29,24 @@ from .throttles import TenCallsPeerMinute
 
 
 
-class MenuItemsViewSet(viewsets.ModelViewSet):
+""" class MenuItemsViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
     ordering_fields=['price','inventory']
-    search_fields=['title', 'category__title'] #RelatedModelName_FieldName
+    search_fields=['title', 'category__title'] """ #RelatedModelName_FieldName
+ 
+ #Throttling based class   
+class MenuItemsViewSet(viewsets.ModelViewSet):
+    #throttle_classes = [AnonRateThrottle, UserRateThrottle]
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemSerializer
+    
+    def get_throttles(self):
+        if self.action == 'create':
+            throttle_classes = [UserRateThrottle]
+        else:
+            throttle_classes = [TenCallsPeerMinute]
+            return [throttle() for throttle in throttle_classes]
 
 
 @api_view() 

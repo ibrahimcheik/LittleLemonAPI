@@ -131,8 +131,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_THROTTLE_RATES':{
-        'anon': '20/day', # second, day, minute
-        'user': '5/minute',
+        'anon': '2/minute', # second, day, minute
+        'user': '10/minute',
         'ten': '10/minute',
-    }
+    },
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
 }

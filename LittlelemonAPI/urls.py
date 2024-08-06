@@ -12,6 +12,8 @@ urlpatterns = [
     #Throttle
     path('throttle-check', views.throttle_check),
     path('throttle-check-auth', views.throttle_check_auth),
+    #Throttling for class based view
+    
     
     path('manager-view/', views.manager_view),
     path('menu-items-generic', views.MenuItemView.as_view()),
