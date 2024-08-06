@@ -3,7 +3,7 @@ from django.shortcuts import render
 from rest_framework import generics
 from .models import MenuItem, Category
 from .serializers import MenuItemSerializer, CategorySerializers
-from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.decorators import api_view, renderer_classes, permission_classes, throttle_classes
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -21,6 +21,11 @@ from rest_framework import viewsets
 #Authentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
+
+#Throttling
+from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import UserRateThrottle
+from .throttles import TenCallsPeerMinute
 
 
 
@@ -118,6 +123,19 @@ def manager_view(request):
         return Response({"message": "Only Manager should see this"})
     else:
         return Response({"message": "You are not authorizes"}, 403)
+    
+#Throttle Rate user request
+
+@api_view()
+@throttle_classes([AnonRateThrottle])
+def throttle_check(request):
+    return Response({"message": "Successful "})
+
+@api_view()
+@permission_classes([IsAuthenticated])
+@throttle_classes([TenCallsPeerMinute])
+def throttle_check_auth(request):
+    return Response({"message": "Message for the login users only "})
 
 
 
