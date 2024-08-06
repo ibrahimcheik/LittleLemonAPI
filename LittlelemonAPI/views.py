@@ -15,6 +15,17 @@ from rest_framework_yaml.renderers import YAMLRenderer
 #pagination
 from django.core.paginator import Paginator, EmptyPage
 
+# Built in Pagination, filtering and sorting
+from rest_framework import viewsets
+
+
+
+class MenuItemsViewSet(viewsets.ModelViewSet):
+    queryset = MenuItem.objects.all()
+    serializer_class = MenuItemSerializer
+    ordering_fields=['price','inventory']
+    search_fields=['title', 'category__title'] #RelatedModelName_FieldName
+
 
 @api_view() 
 @renderer_classes ([TemplateHTMLRenderer])
@@ -43,7 +54,7 @@ def menu_items(request):
         category_name = request.query_params.get('category')
         to_price = request.query_params.get('price')
         search = request.query_params.get('search')
-        ordering = request.query_params.get('ordering')
+        ordering = request.query_params.get('ordering') #/menu-items?ordering=price,inventory.
         perpage = request.query_params.get('perpage', default=2)
         page = request.query_params.get('page', default=1)
         
@@ -58,7 +69,7 @@ def menu_items(request):
             ordering_fields = ordering.split(",")
             items = items.order_by(*ordering_fields)
             
-        paginator = Paginator(items, per_page=perpage)
+        paginator = Paginator(items, per_page=perpage) #Test /?perpage=3&page=1
         try:
             items = paginator.page(number=page)
         except EmptyPage:
