@@ -28,5 +28,8 @@ urlpatterns = [
     path('menu-items/',views.MenuItemsViewSet.as_view({'get':'list'})),
     path('menu-items/<int:pk>',views.MenuItemsViewSet.as_view({'get':'retrieve'})),
     
+    path('me', views.me),
+    path('groups/manager/users', views.managers),
+    
 ]
 

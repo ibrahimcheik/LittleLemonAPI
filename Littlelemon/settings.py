@@ -30,8 +30,8 @@ INSTALLED_APPS = [
     'djoser', # always after rest_framework app
     
     #JWT
-    'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist' # migrate db before running
+    #'rest_framework_simplejwt',
+    #'rest_framework_simplejwt.token_blacklist' # migrate db before running
 
 ]
 
