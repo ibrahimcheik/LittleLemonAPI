@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'LittlelemonAPI',
     'rest_framework',
     'rest_framework.authtoken',
+    'djoser', # always after rest_framework app
 
 ]
 
@@ -129,6 +130,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 2,
     'DEFAULT_AUTHENTICATION_CLASSES':(
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication', # for browsable api view !!!REMOVE before production
     ),
     'DEFAULT_THROTTLE_RATES':{
         'anon': '2/minute', # second, day, minute
@@ -139,4 +141,9 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
     ],
+}
+
+DJOSER = {
+    "USER_ID_FIELD": "username"
+    #"LOGIN_FIELD": "email"
 }
