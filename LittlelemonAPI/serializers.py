@@ -22,6 +22,7 @@ class CategorySerializers(serializers.ModelSerializer):
         ]
 
 #class MenuItemSerializer(serializers.ModelSerializer):
+
 class MenuItemSerializer(serializers.HyperlinkedModelSerializer):
 
     
